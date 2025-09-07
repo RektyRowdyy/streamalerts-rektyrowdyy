@@ -6,12 +6,17 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "node --watch src/index.js",
+    "deploy": "railway up",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": ["discord", "bot", "twitch", "stream", "alerts"],
   "author": "",
   "license": "ISC",
   "description": "Discord bot for stream alerts and notifications",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RektyRowdyy/streamalerts-rektyrowdyy.git"
+  },
   "dependencies": {
     "discord.js": "^14.14.1",
     "dotenv": "^16.3.1",

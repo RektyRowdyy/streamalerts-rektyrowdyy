@@ -1,6 +1,7 @@
 import { Client, GatewayIntentBits, EmbedBuilder } from 'discord.js';
 import axios from 'axios';
 import dotenv from 'dotenv';
+import http from 'http';
 
 dotenv.config();
 
@@ -12,6 +13,7 @@ const TWITCH_USERNAME = process.env.TWITCH_USERNAME; // Twitch username
 const DISCORD_CHANNEL_ID = process.env.DISCORD_CHANNEL_ID; // Channel to send alerts
 const CHECK_INTERVAL = 60000; // Check every 60 seconds
 const TEST_MODE = process.env.TEST_MODE === 'true';
+const PORT = process.env.PORT || 3000;
 
 // Create Discord client
 const client = new Client({
@@ -157,6 +159,35 @@ client.on('error', error => {
 
 process.on('unhandledRejection', error => {
     console.error('❌ Unhandled promise rejection:', error);
+});
+
+// Create HTTP server for Railway health checks
+const server = http.createServer((req, res) => {
+    if (req.url === '/health' || req.url === '/') {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ 
+            status: 'healthy', 
+            uptime: process.uptime(),
+            bot: client.user ? client.user.tag : 'Not logged in',
+            timestamp: new Date().toISOString()
+        }));
+    } else {
+        res.writeHead(404, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Not found' }));
+    }
+});
+
+server.listen(PORT, () => {
+    console.log(`🌐 Health check server running on port ${PORT}`);
+});
+
+// Graceful shutdown handling
+process.on('SIGTERM', () => {
+    console.log('🔄 Received SIGTERM, shutting down gracefully...');
+    server.close(() => {
+        client.destroy();
+        process.exit(0);
+    });
 });
 
 // Login to Discord

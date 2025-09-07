@@ -90,6 +90,56 @@ npm start
 
 This will send a test notification to verify your setup is working correctly.
 
+## Railway.app Deployment
+
+### Quick Deploy to Railway
+
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/xyquaG)
+
+### Manual Railway Deployment
+
+1. **Install Railway CLI**:
+```bash
+npm install -g @railway/cli
+```
+
+2. **Login to Railway**:
+```bash
+railway login
+```
+
+3. **Deploy the project**:
+```bash
+railway up
+```
+
+4. **Set environment variables** in Railway dashboard:
+   - `DISCORD_TOKEN`
+   - `DISCORD_CHANNEL_ID` 
+   - `TWITCH_CLIENT_ID`
+   - `TWITCH_CLIENT_SECRET`
+   - `TWITCH_USERNAME`
+   - `TEST_MODE` (optional, set to `false` for production)
+
+5. **Monitor deployment** in Railway dashboard
+
+### Railway Configuration Files
+
+The project includes Railway-specific configuration:
+
+- `Procfile` - Defines the web process for Railway
+- `railway.toml` - Railway deployment settings
+- `nixpacks.toml` - Build configuration for Nixpacks
+- Health check endpoint at `/health` for Railway monitoring
+
+### Railway Features Used
+
+- **Nixpacks**: Zero-config buildpack for Node.js
+- **Auto-scaling**: Single replica with restart policy
+- **Health monitoring**: HTTP endpoint for status checks
+- **Graceful shutdowns**: SIGTERM handling for deployments
+- **Environment variables**: Secure credential management
+
 ## Configuration
 
 ### Environment Variables
@@ -118,6 +168,9 @@ StreamAlerts-RektyRowdyy/
 ├── .env.example           # Environment variables template
 ├── .gitignore            # Git ignore rules
 ├── CLAUDE.md             # Claude Code guidance
+├── Procfile              # Railway web process definition
+├── railway.toml          # Railway deployment configuration
+├── nixpacks.toml         # Nixpacks build configuration
 ├── package.json          # Project dependencies and scripts
 └── README.md             # This file
 ```
@@ -158,6 +211,12 @@ The project is structured for easy expansion:
 - Set `TEST_MODE=true` in `.env` file
 - Restart the bot
 - Check Discord channel permissions
+
+**Railway deployment issues**
+- Check Railway logs in dashboard
+- Verify all environment variables are set
+- Ensure health check endpoint is accessible at `/health`
+- Check that PORT environment variable is available (Railway sets this automatically)
 
 ### Error Messages
 

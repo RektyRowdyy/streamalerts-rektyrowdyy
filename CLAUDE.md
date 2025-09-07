@@ -11,6 +11,7 @@ This is a Discord bot that monitors Twitch streams and sends live notifications 
 - `npm install` - Install dependencies
 - `npm start` - Start the bot in production mode
 - `npm run dev` - Start the bot with file watching for development
+- `npm run deploy` - Deploy to Railway (requires Railway CLI)
 - `npm test` - No tests configured yet (returns error)
 
 ## Architecture
@@ -28,6 +29,8 @@ The bot is currently a single-file application (`src/index.js`) with a modular d
 - **Discord Integration**: Uses `discord.js` v14 with minimal intents (Guilds, GuildMessages, MessageContent)
 - **Error Handling**: Global handlers for unhandled rejections and Discord client errors
 - **Test Mode**: Built-in test notification system activated via `TEST_MODE` environment variable
+- **Health Check Server**: HTTP server on configurable port for Railway monitoring and health checks
+- **Graceful Shutdown**: SIGTERM handling for clean deployments and restarts
 
 ### Directory Structure (Ready for Expansion)
 - `src/commands/` - Future Discord slash commands
@@ -49,9 +52,25 @@ Required environment variables (see `.env.example`):
 
 Optional environment variables:
 - `TEST_MODE` - Set to `true` to send a test notification on startup instead of monitoring (default: `false`)
+- `PORT` - Port for health check server (default: `3000`, Railway sets this automatically)
+
+## Deployment
+
+### Railway.app Deployment
+The project is configured for Railway deployment with:
+- `Procfile` - Defines web process type for Railway
+- `railway.toml` - Railway deployment configuration with restart policies
+- `nixpacks.toml` - Nixpacks build configuration for Node.js
+- Health check endpoint at `/health` for Railway monitoring
+
+### Railway Environment Setup
+1. Set all required environment variables in Railway dashboard
+2. Railway automatically provides `PORT` environment variable
+3. Deploy using `railway up` or connect GitHub repository for auto-deployments
 
 ## Key Constants
 
 - `CHECK_INTERVAL`: 60000ms (60 seconds) - Stream status polling frequency
+- `PORT`: 3000 (default) - Health check server port
 - Twitch embed color: `#9146FF` (Twitch purple)
 - Thumbnail size: `320x180` pixels
